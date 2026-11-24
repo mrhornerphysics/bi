@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Biomedical Innovation resources</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --paper:#F5F7F8; --sheet:#FFFFFF; --ink:#18293A; --ink-2:#4B5C6B; --ink-3:#6E7D8A;
+  --grid:#E3E8EC; --rule:#CDD5DC; --accent:#1F5FA8; --accent-bg:#E4EEF9;
+  --new-bg:#DDF2EC; --new-t:#0D4A3A;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#111A22; --sheet:#17222C; --ink:#E6EDF2; --ink-2:#B3C0CB; --ink-3:#8796A3;
+    --grid:#1F2C37; --rule:#2E3D4A; --accent:#7FB2EE; --accent-bg:#1B3049;
+    --new-bg:#163D33; --new-t:#C9F0E3;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#111A22; --sheet:#17222C; --ink:#E6EDF2; --ink-2:#B3C0CB; --ink-3:#8796A3;
+  --grid:#1F2C37; --rule:#2E3D4A; --accent:#7FB2EE; --accent-bg:#1B3049;
+  --new-bg:#163D33; --new-t:#C9F0E3;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.55;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px}
+.wrap{max-width:980px;margin:0 auto;padding:36px 20px 48px}
+header{margin-bottom:24px}
+h1{font-size:clamp(28px,4vw,40px);line-height:1.1;margin:0 0 6px;letter-spacing:-0.01em}
+.lede{color:var(--ink-2);margin:0;max-width:60ch}
+.tools{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:0 0 20px}
+.search{flex:1 1 260px;font:inherit;font-size:16px;padding:10px 14px;border:1px solid var(--rule);border-radius:10px;background:var(--sheet);color:var(--ink)}
+.search::placeholder{color:var(--ink-3)}
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.filters button{font:inherit;font-size:15px;border:1px solid var(--rule);background:var(--sheet);color:var(--ink-2);padding:7px 14px;border-radius:999px;cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--sheet)}
+.filters button:hover:not([aria-pressed="true"]){background:var(--accent-bg);color:var(--ink)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.list{display:grid;gap:12px}
+.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 18px;align-items:center;background:var(--sheet);border:1px solid var(--rule);border-radius:12px;padding:16px 20px;text-decoration:none;color:inherit}
+.item:hover{border-color:var(--accent)}
+.item:hover .open{background:var(--accent);color:var(--sheet);border-color:var(--accent)}
+.item h2{font-size:20px;margin:0;line-height:1.25}
+.item p{margin:4px 0 0;color:var(--ink-2);font-size:16px}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.tag{font-size:13px;padding:2px 10px;border-radius:999px;background:var(--accent-bg);color:var(--ink)}
+.tag.new{background:var(--new-bg);color:var(--new-t);font-weight:700}
+.open{font-size:15px;font-weight:700;border:1px solid var(--rule);border-radius:8px;padding:8px 16px;white-space:nowrap;color:var(--accent)}
+@media (max-width:560px){.item{grid-template-columns:minmax(0,1fr)}.open{justify-self:start}}
+.empty{background:var(--sheet);border:1px dashed var(--rule);border-radius:12px;padding:24px;color:var(--ink-2)}
+.empty button{font:inherit;color:var(--accent);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}
+.count{color:var(--ink-3);font-size:14px;margin:0 0 10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Biomedical Innovation</h1>
+    <p class="lede">Class resources from Mr. Horner. Choose a resource to open it.</p>
+  </header>
+
+  <div class="tools">
+    <input class="search" id="q" type="search" placeholder="Search resources" aria-label="Search resources">
+    <div class="filters" id="filters" role="group" aria-label="Filter by type"></div>
+  </div>
+  <p class="count" id="count" aria-live="polite"></p>
+  <div class="list" id="list"></div>
+</div>
+
+<script>
+/* ============================================================
+   ADD NEW RESOURCES HERE
+   Copy one block, paste it below the last one, and change the values.
+   file:  the exact file name in the repository (spaces are fine)
+   type:  a short label; each new type becomes a filter button
+   added: date in YYYY-MM-DD form; shows a "New" tag for 14 days
+   ============================================================ */
+const RESOURCES = [
+  {
+    title: "ER layouts by community",
+    file: "ER layouts by community.html",
+    description: "Compare emergency department floor plans for big-city, suburban, rural, and freestanding ERs. Select any zone to see why it’s there.",
+    type: "Interactive",
+    added: "2026-11-24"
+  },
+];
+/* ============================================================ */
+
+const NEW_DAYS = 14;
+const list = document.getElementById('list');
+const q = document.getElementById('q');
+const filters = document.getElementById('filters');
+const count = document.getElementById('count');
+let type = 'All';
+
+function esc(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function isNew(d){const t=Date.parse(d);return !isNaN(t)&&(Date.now()-t)/864e5<=NEW_DAYS;}
+
+const types = ['All', ...new Set(RESOURCES.map(r=>r.type).filter(Boolean))];
+if (types.length > 2) {
+  filters.innerHTML = types.map(t=>`<button data-t="${esc(t)}" aria-pressed="${t===type}">${esc(t)}</button>`).join('');
+  filters.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+    type=b.dataset.t;
+    filters.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+    render();
+  }));
+}
+
+function render(){
+  const term = q.value.trim().toLowerCase();
+  const shown = RESOURCES
+    .filter(r => type==='All' || r.type===type)
+    .filter(r => !term || [r.title,r.description,r.type].join(' ').toLowerCase().includes(term))
+    .sort((a,b)=>(b.added||'').localeCompare(a.added||''));
+  count.textContent = shown.length===1 ? '1 resource' : shown.length+' resources';
+  if (!shown.length){
+    list.innerHTML = `<div class="empty">No resources match “${esc(q.value)}”. <button id="clr">Clear search</button></div>`;
+    document.getElementById('clr').addEventListener('click',()=>{q.value='';type='All';filters.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.t==='All'));render();q.focus();});
+    return;
+  }
+  list.innerHTML = shown.map(r=>`
+    <a class="item" href="${esc(encodeURI(r.file))}">
+      <div>
+        <h2>${esc(r.title)}</h2>
+        ${r.description?`<p>${esc(r.description)}</p>`:''}
+        <div class="meta">${r.type?`<span class="tag">${esc(r.type)}</span>`:''}${isNew(r.added)?'<span class="tag new">New</span>':''}</div>
+      </div>
+      <span class="open">Open</span>
+    </a>`).join('');
+}
+q.addEventListener('input',render);
+render();
+</script>
+</body>
+</html>
