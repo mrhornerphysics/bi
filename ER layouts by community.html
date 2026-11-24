@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ER layouts by community</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --paper:#F5F7F8; --sheet:#FFFFFF; --ink:#18293A; --ink-2:#4B5C6B; --ink-3:#6E7D8A;
+  --grid:#E3E8EC; --rule:#CDD5DC; --accent:#1F5FA8; --accent-bg:#E4EEF9;
+  --flow-f:#E9ECEF; --flow-s:#7C8894; --flow-t:#2B3946;
+  --acu-f:#FBE3E1; --acu-s:#C2453D; --acu-t:#7A1E18;
+  --trt-f:#DDF2EC; --trt-s:#2C8A6E; --trt-t:#0D4A3A;
+  --sup-f:#ECEAFB; --sup-s:#6656C2; --sup-t:#352A7C;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#111A22; --sheet:#17222C; --ink:#E6EDF2; --ink-2:#B3C0CB; --ink-3:#8796A3;
+    --grid:#1F2C37; --rule:#2E3D4A; --accent:#7FB2EE; --accent-bg:#1B3049;
+    --flow-f:#26313B; --flow-s:#8996A2; --flow-t:#DCE3E9;
+    --acu-f:#4A2220; --acu-s:#E5776F; --acu-t:#FBD3CF;
+    --trt-f:#163D33; --trt-s:#4FBF9C; --trt-t:#C9F0E3;
+    --sup-f:#2C2753; --sup-s:#9C90EA; --sup-t:#E0DCFB;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#111A22; --sheet:#17222C; --ink:#E6EDF2; --ink-2:#B3C0CB; --ink-3:#8796A3;
+  --grid:#1F2C37; --rule:#2E3D4A; --accent:#7FB2EE; --accent-bg:#1B3049;
+  --flow-f:#26313B; --flow-s:#8996A2; --flow-t:#DCE3E9;
+  --acu-f:#4A2220; --acu-s:#E5776F; --acu-t:#FBD3CF;
+  --trt-f:#163D33; --trt-s:#4FBF9C; --trt-t:#C9F0E3;
+  --sup-f:#2C2753; --sup-s:#9C90EA; --sup-t:#E0DCFB;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.55}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 40px}
+h1{font-size:clamp(26px,3.4vw,36px);line-height:1.15;margin:0 0 6px;letter-spacing:-0.01em}
+.lede{color:var(--ink-2);margin:0 0 22px;max-width:62ch}
+.seg{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--rule);border-radius:10px;overflow:hidden;width:fit-content;max-width:100%;background:var(--sheet)}
+.seg button{font:inherit;font-size:15px;border:0;border-right:1px solid var(--rule);background:transparent;color:var(--ink-2);padding:10px 16px;cursor:pointer}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+.seg button:hover:not([aria-pressed="true"]){background:var(--accent-bg);color:var(--ink)}
+button:focus-visible,.zone:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.stats{display:flex;flex-wrap:wrap;gap:8px 28px;margin:18px 0 16px;color:var(--ink-2);font-size:15px}
+.stats b{color:var(--ink);font-size:17px;margin-left:6px}
+.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+.plan{background:var(--sheet);border:1px solid var(--rule);border-radius:14px;padding:10px}
+.plan svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px;color:var(--ink-2);padding:8px 6px 2px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;border:1px solid}
+.zone{cursor:pointer}
+.zone rect{stroke-width:1;transition:stroke-width .15s}
+.zone:hover rect{stroke-width:2}
+.zone.sel rect{stroke-width:3}
+.zone text{pointer-events:none;font-family:inherit}
+.zone .t{font-size:14px;font-weight:700}
+.zone .s{font-size:12px}
+.flow rect{fill:var(--flow-f);stroke:var(--flow-s)} .flow text{fill:var(--flow-t)}
+.acuity rect{fill:var(--acu-f);stroke:var(--acu-s)} .acuity text{fill:var(--acu-t)}
+.treat rect{fill:var(--trt-f);stroke:var(--trt-s)} .treat text{fill:var(--trt-t)}
+.support rect{fill:var(--sup-f);stroke:var(--sup-s)} .support text{fill:var(--sup-t)}
+.panel{background:var(--sheet);border:1px solid var(--rule);border-radius:14px;padding:20px 22px}
+.panel h2{font-size:22px;margin:0 0 6px;line-height:1.2}
+.chip{display:inline-block;font-size:13px;padding:2px 10px;border-radius:999px;margin-bottom:12px}
+.chip.flow{background:var(--flow-f);color:var(--flow-t)} .chip.acuity{background:var(--acu-f);color:var(--acu-t)}
+.chip.treat{background:var(--trt-f);color:var(--trt-t)} .chip.support{background:var(--sup-f);color:var(--sup-t)}
+.panel p{margin:0 0 14px}
+.panel h3{font-size:16px;margin:18px 0 8px;color:var(--ink-2);font-weight:700}
+.cmp{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
+.cmp li{border-bottom:1px solid var(--rule)}
+.cmp button{all:unset;display:block;width:100%;box-sizing:border-box;padding:10px 8px;cursor:pointer;border-radius:6px}
+.cmp button:hover{background:var(--accent-bg)}
+.cmp button:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+.cmp .who{font-weight:700;font-size:15px;display:block}
+.cmp .what{font-size:15px;color:var(--ink-2)}
+.cmp .here{font-size:12px;color:var(--accent);margin-left:8px;font-weight:700}
+.cmp li.cur button{background:var(--accent-bg);cursor:default}
+.hint{color:var(--ink-3);font-size:15px}
+.note{font-size:13px;color:var(--ink-3);margin-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>How ER layouts change by community</h1>
+  <p class="lede">Pick a community, then select any zone on the floor plan to see why it’s there and how the same space looks somewhere else.</p>
+
+  <div class="seg" role="group" aria-label="Community type" id="seg">
+    <button data-k="urban">Big-city trauma center</button>
+    <button data-k="suburban">Suburban hospital</button>
+    <button data-k="rural">Rural critical access</button>
+    <button data-k="free">Freestanding ER</button>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="grid">
+    <div class="plan">
+      <svg id="svg" viewBox="0 0 680 390" role="group" aria-label="Floor plan"></svg>
+      <div class="legend">
+        <span><span class="sw" style="background:var(--flow-f);border-color:var(--flow-s)"></span>Entry and patient flow</span>
+        <span><span class="sw" style="background:var(--acu-f);border-color:var(--acu-s)"></span>Highest acuity</span>
+        <span><span class="sw" style="background:var(--trt-f);border-color:var(--trt-s)"></span>Treatment areas</span>
+        <span><span class="sw" style="background:var(--sup-f);border-color:var(--sup-s)"></span>Support and specialty</span>
+      </div>
+    </div>
+    <aside class="panel" id="panel" aria-live="polite"></aside>
+  </div>
+  <p class="note">Plans are simplified schematics. Room counts and visit numbers are rough typical ranges; real emergency departments vary widely.</p>
+</div>
+
+<script>
+const NAMES={urban:'Big-city trauma center',suburban:'Suburban hospital',rural:'Rural critical access',free:'Freestanding ER'};
+const CAT={flow:'Entry and patient flow',acuity:'Highest acuity',treat:'Treatment area',support:'Support and specialty'};
+const C={
+ambulance:{urban:'4+ drive-through bays, a decon room, and a rooftop helipad.',suburban:'2–4 bays next to the resus rooms.',rural:'1–2 bays used for transfers out as much as arrivals, with a ground-level helipad.',free:'Mostly used for outgoing transfers; ambulances often take major trauma elsewhere.'},
+resus:{urban:'4–6 trauma bays with a trauma team in house around the clock.',suburban:'2–3 resus rooms, with surgeons on call.',rural:'One flexible trauma room: stabilize, then transfer.',free:'1–2 resus rooms: stabilize, then transfer.'},
+imaging:{urban:'CT inside the ED, steps from the trauma bays.',suburban:'CT next to the ED, shared with the hospital.',rural:'X-ray shared with the hospital; CT may be limited, and images are often read remotely.',free:'CT and x-ray on site.'},
+walkin:{urban:'Separate entrance, often with weapons screening.',suburban:'Main front door facing the parking lot.',rural:'Small lobby that may double as the after-hours hospital entrance.',free:'Storefront-style entrance near major roads.'},
+triage:{urban:'A provider at triage orders tests right away.',suburban:'Split flow sorts patients by how sick they are.',rural:'One nurse may register, triage, and treat.',free:'Combined with waiting; waits are usually short.'},
+treatment:{urban:'Pods of about 20 rooms, each with its own team.',suburban:'About 25 rooms in a ring around a nurse station.',rural:'2–6 identical, flexible rooms.',free:'8–12 general rooms around a central desk.'},
+nurse:{urban:'A central core of shared resources, plus a station in each pod.',suburban:'A central station in the middle of the ring.',rural:'One station that can see every room and the door.',free:'One central desk for the whole building.'},
+fasttrack:{urban:'Dedicated fast track with its own staff.',suburban:'Fast track for sprains, stitches, and minor illness.',rural:'None; any open room is used.',free:'Usually none; the whole facility moves quickly.'},
+peds:{urban:'A separate pediatric ED with its own waiting room.',suburban:'A few kid-friendly rooms inside the main ED.',rural:'Flexible rooms plus a rolling pediatric cart.',free:'General rooms stocked with pediatric equipment.'},
+behavioral:{urban:'A secure behavioral unit with several rooms and dedicated staff.',suburban:'1–2 safe rooms.',rural:'One safe room, sometimes holding a patient for days.',free:'Limited space; patients are often transferred.'},
+observation:{urban:'An observation unit for stays up to about 24 hours.',suburban:'Usually an observation area elsewhere in the hospital.',rural:'Patients may use inpatient or swing beds.',free:'Little or none; patients are transferred.'},
+waiting:{urban:'A large waiting room plus chairs in fast track.',suburban:'Results waiting with recliners.',rural:'A small lobby.',free:'A small waiting area combined with triage.'},
+lab:{urban:'A satellite lab in the core plus the main hospital lab.',suburban:'Hospital lab, with samples sent by pneumatic tube.',rural:'Lab and x-ray staff shared with the whole hospital.',free:'On-site lab and a small pharmacy.'},
+telehealth:{urban:'Most specialists are available in person.',suburban:'Some telehealth for psychiatry and stroke.',rural:'A telehealth cart is essential for specialist care.',free:'Telehealth is common for specialist consults.'},
+isolation:{urban:'Several negative-pressure rooms.',suburban:'1–2 negative-pressure rooms.',rural:'Usually one isolation room.',free:'At least one isolation room.'},
+transfer:{urban:'Receives transfers from smaller hospitals.',suburban:'Transfers severe trauma and specialty cases.',rural:'Transfer agreements are central to its role.',free:'Depends entirely on a transfer agreement.'}
+};
+const D={
+urban:{stats:[['Treatment spaces','60–100+'],['Visits per year','80k–120k+'],['Defining feature','Level I trauma']],
+overview:'Built for high volume and the most critical patients. Ambulances and walk-ins enter separately, children and behavioral health patients have their own units, and treatment rooms are split into pods that work like smaller EDs.',
+z:[
+[40,30,130,50,'flow','Ambulance bay','Decon room','ambulance','A city trauma center can have several ambulances arrive within minutes of each other, so it needs multiple drive-through bays and an entrance separate from the public lobby. The decon room lets staff wash patients exposed to chemicals before they come inside, so one contaminated patient can’t shut down the whole ED. A rooftop helipad with a dedicated elevator usually feeds into the same hallway.'],
+[40,90,130,120,'acuity','Trauma bays','4–6 rooms','resus','As a Level I trauma center, this ED receives the region’s most severely injured patients, often several at once after a crash or shooting. Each bay fits a full trauma team and has overhead x-ray, blood warmers, and airway equipment ready. The bays sit right beside the ambulance entrance because seconds matter for a patient who is bleeding heavily.'],
+[40,220,130,70,'support','CT + x-ray','Inside the ED','imaging','Trauma, stroke, and chest pain patients often need a CT scan within minutes of arriving. Putting the scanner inside the ED, steps from the trauma bays, avoids moving an unstable patient through long hallways and elevators.'],
+[40,300,130,60,'flow','Walk-in entry','Screening','walkin','Most patients still arrive on foot or by car. Many urban EDs screen visitors for weapons at this door, and the entrance is kept apart from the ambulance bay so stretcher patients never pass through a crowded lobby.'],
+[180,30,145,120,'treat','Acute pod A','~20 rooms','treatment','With 80,000 or more visits a year, one giant open department would be impossible to manage. The ED is divided into pods of about 20 rooms, each with its own nurses, physicians, and supplies, like several smaller EDs under one roof. Pods can open or close as patient volume rises and falls through the day.'],
+[335,30,145,120,'treat','Acute pod B','~20 rooms','treatment','A second pod lets the ED group patients by need, such as one pod for higher-risk cardiac and stroke patients and another for moderate illness. During slow overnight hours, one pod can close so staff concentrate in the other.'],
+[490,30,150,120,'support','Behavioral unit','Secure rooms','behavioral','Big-city EDs see many patients in mental health crisis, and some wait days for a psychiatric bed. A secure unit with ligature-resistant rooms, calm space, and dedicated staff keeps these patients safe while freeing medical rooms for others.'],
+[180,160,300,130,'support','Central core','Staff, lab, supplies','nurse','The core holds what every pod needs: a satellite lab, medication rooms, supply storage, and staff workspace. Placing it in the middle shortens walking distances, which adds up quickly for staff covering many rooms over a 12-hour shift.'],
+[490,160,150,130,'treat','Observation','Up to 24-hr stays','observation','Some patients aren’t sick enough to be admitted but aren’t ready to go home, such as chest pain patients waiting on repeat blood tests. An observation unit holds them for up to about 24 hours, which frees acute rooms for new arrivals.'],
+[180,300,145,60,'flow','Triage','MD at triage','triage','Busy waiting rooms fill quickly, so many urban EDs place a physician or advanced practice provider at triage. Tests and medications can be ordered right away, and care starts before a room opens up.'],
+[335,300,145,60,'treat','Fast track','Low acuity','fasttrack','Patients with minor cuts, sprains, or rashes would otherwise wait hours behind critical patients. Fast track uses chairs and small exam spaces with its own staff to treat and discharge them quickly.'],
+[490,300,150,60,'treat','Pediatric ED','Separate waiting','peds','Large cities have enough sick and injured children to justify a separate pediatric ED with child-sized equipment, pediatric-trained staff, and its own waiting room. Keeping children away from adult trauma and behavioral health patients lowers stress for families.']
+]},
+suburban:{stats:[['Treatment spaces','25–40'],['Visits per year','35k–60k'],['Defining feature','Split flow']],
+overview:'Built for a steady stream of mostly mid-acuity patients. Split flow keeps beds free for patients who need to lie down, and a ring of rooms around one nurse station keeps walking distances short.',
+z:[
+[40,30,130,50,'flow','Ambulance bay','1–2 bays','ambulance','A suburban ED receives a steady stream of ambulances, but rarely many at once. A few bays next to the resuscitation rooms are usually enough, with an entrance separate from the front door.'],
+[40,90,130,100,'acuity','Resus rooms','2–3 rooms','resus','Heart attacks, strokes, and serious crashes still come to suburban hospitals. Two or three fully equipped resuscitation rooms handle them, and the most severe trauma patients may be stabilized and sent on to a city trauma center.'],
+[40,200,130,90,'support','Imaging','Shared CT','imaging','The CT scanner usually sits just outside the ED and is shared with the rest of the hospital. It’s placed along the path from the resus rooms so stroke and trauma patients can be scanned quickly.'],
+[40,300,130,60,'flow','Walk-in entry','Main front door','walkin','Most suburban ED patients arrive by car, so the front door faces the parking lot and serves as the department’s main entrance. Clear signs help families find it quickly.'],
+[180,30,300,260,'treat','Main treatment','~25 rooms in a ring','treatment','About 25 rooms are arranged in a ring, often called a racetrack, around a central nurse station. Staff can see into most rooms from the center, and walking distances stay short.',1],
+[255,140,150,70,'flow','Nurse station','Sees all rooms','nurse','The central station is the hub of the ring. Nurses and physicians can watch monitors and room doors from one place, with supplies and medications a few steps away.'],
+[490,30,150,120,'treat','Fast track','Sprains, stitches','fasttrack','Suburban EDs see many families with minor injuries and illnesses, like sprains, cuts, and ear infections. A fast track area treats these patients quickly in a separate space so they don’t fill the main rooms.'],
+[490,160,150,130,'support','Safe rooms','1–2 behavioral','behavioral','Suburban EDs see fewer behavioral health patients than city EDs, but they still need rooms with no ligature points and secured furniture. Some safe rooms have roll-down covers that hide medical equipment when a patient is in crisis.'],
+[180,300,145,60,'flow','Triage','Split flow','triage','Split flow means sorting patients right at triage. Sicker patients go straight to a bed, while stable patients go to fast track or results waiting, so beds are used only by those who need them.'],
+[335,300,145,60,'flow','Results waiting','Recliner chairs','waiting','Patients who have had tests and are stable wait here in recliners instead of occupying a bed. This simple change can free several rooms during busy evenings.'],
+[490,300,150,60,'treat','Peds area','Kid-friendly rooms','peds','Suburbs have many young families, so a few rooms are set aside and decorated for children, with pediatric equipment stocked in place. It’s usually part of the main ED rather than a separate department.']
+]},
+rural:{stats:[['Treatment spaces','2–6'],['Visits per year','3k–10k'],['Defining feature','Stabilize and transfer']],
+overview:'Built for a small staff and any kind of patient. Every room is flexible, every room can be seen from one station, and for critical patients the main job is to stabilize and transfer.',
+z:[
+[40,30,130,60,'flow','Ambulance bay','Helipad nearby','ambulance','Many critical patients are stabilized here and sent to larger hospitals, so this bay handles outgoing transfers as much as arrivals. A ground-level helipad nearby lets a helicopter crew reach the trauma room in minutes. The local ambulance service may even be based at the hospital.'],
+[40,100,130,120,'acuity','Trauma room','1 flexible bay','resus','A rural ED may see a serious farm accident or highway crash only occasionally, but it must always be ready. One large, well-equipped room handles any critical patient, from cardiac arrest to major trauma, until a transfer team arrives.'],
+[40,230,130,60,'treat','Isolation','Airborne cases','isolation','Patients with infections like tuberculosis or measles need a negative-pressure room that keeps air from flowing into the rest of the building. A rural ED usually has just one, and the hospital may have no other place to isolate a contagious patient.'],
+[40,300,130,60,'flow','Walk-in entry','Small lobby','walkin','The small lobby may also serve as the hospital’s main entrance after hours. Because the staff is small, the entry is placed where the nurse station can see who comes in.'],
+[180,30,145,100,'treat','Exam rooms 1–2','Flexible use','treatment','These rooms are identical and flexible, so any patient can go into any room. A standard layout helps a small staff work quickly, since supplies are always in the same place.'],
+[335,30,145,100,'treat','Exam rooms 3–4','Peds, OB, adult','treatment','With only 10 to 25 patients a day of every age, no room can be set aside for one type of patient. These rooms must handle children, adults, and even unexpected births, since many rural hospitals no longer have a labor and delivery unit. Pediatric supplies are kept on a cart that rolls to any room.'],
+[180,140,300,150,'flow','Nurse station','Sees every room','nurse','Overnight, one physician and one or two nurses may cover the whole ED. The station is placed so staff can see every room and the entrance at once, which is the most important rule of a small ED layout.'],
+[490,30,150,100,'support','Safe room','Behavioral holds','behavioral','Patients in mental health crisis may wait many hours or days for a psychiatric bed elsewhere. One safe room keeps them secure, and it can be used for other patients when it isn’t needed.'],
+[490,140,150,100,'support','Telehealth cart','Remote specialists','telehealth','Rural hospitals rarely have specialists on site. A telehealth cart with a camera and screen brings in a stroke neurologist, psychiatrist, or burn expert from a distant hospital, sometimes avoiding an unnecessary transfer.'],
+[490,250,150,110,'support','Lab + x-ray','Shared w/ hospital','lab','A small hospital can’t staff a separate lab and imaging team for each department, so the ED shares them with the whole hospital. X-rays and scans are often read remotely by radiologists in other cities.'],
+[180,300,300,60,'flow','Registration + triage','Often one nurse','triage','In a small ED, one nurse may register patients, triage them, and then care for them. Combining these steps in one space saves time for a small staff.']
+]},
+free:{stats:[['Treatment spaces','8–12'],['Visits per year','15k–25k'],['Defining feature','No inpatient beds']],
+overview:'Built for fast diagnosis without a hospital attached. On-site imaging and lab, a handful of flexible rooms, and a transfer plan for anyone who needs to be admitted.',
+z:[
+[40,30,130,60,'flow','Ambulance bay','Transfers out','ambulance','A freestanding ER mainly uses its ambulance bay to send patients out. After diagnosis and stabilization, anyone who needs surgery or admission goes to a full hospital, often the parent hospital.'],
+[40,100,130,90,'acuity','Resus rooms','2 rooms','resus','Two resuscitation rooms handle the occasional critical patient who arrives by car, such as a heart attack or severe allergic reaction. Staff stabilize these patients and arrange an immediate transfer.'],
+[40,200,130,90,'support','CT + x-ray','On site','imaging','With no hospital next door, a freestanding ER needs its own scanners. Fast imaging lets it diagnose strokes, appendicitis, and fractures without sending patients elsewhere first.'],
+[40,300,130,60,'flow','Walk-in entry','Front door','walkin','The building is often placed in a growing suburb near major roads and designed to be easy to spot, like a store. Most patients arrive by car.'],
+[180,30,300,260,'treat','Exam rooms','8–12 rooms','treatment','Eight to twelve general rooms surround a central desk. Because the facility is small, staff can see most rooms easily, and the rooms are flexible, much like a rural ED.',1],
+[255,140,150,70,'flow','Nurse station','Central desk','nurse','The central desk is the hub for the whole building. With a small staff, everyone works from one place.'],
+[490,30,150,120,'support','Lab + pharmacy','Point-of-care','lab','An on-site lab gives fast blood test results, and a small pharmacy stocks emergency medications. Without them, the ER would have to send samples away and wait.'],
+[490,160,150,200,'flow','Hospital link','Transfer agreement','transfer','With no inpatient beds, a freestanding ER depends on a transfer agreement with a hospital. A clear plan for moving patients matters as much as the building itself.'],
+[180,300,300,60,'flow','Waiting + triage','Short waits typical','triage','Freestanding ERs see fewer patients than hospital EDs, so waits are usually short. Waiting and triage share one space near the front door.']
+]}
+};
+let cur='urban', sel=null;
+const NS='http://www.w3.org/2000/svg';
+const svg=document.getElementById('svg'), panel=document.getElementById('panel');
+
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+
+function drawPlan(){
+  svg.innerHTML='';
+  const defs=el('defs',{},svg);
+  const p=el('pattern',{id:'gp',width:'20',height:'20',patternUnits:'userSpaceOnUse'},defs);
+  el('path',{d:'M20 0H0V20',fill:'none',stroke:'var(--grid)','stroke-width':'1'},p);
+  el('rect',{x:0,y:0,width:680,height:390,fill:'url(#gp)'},svg);
+  el('rect',{x:30,y:20,width:620,height:350,rx:10,fill:'none',stroke:'var(--ink-3)','stroke-width':'1','stroke-dasharray':'5 5'},svg);
+  D[cur].z.forEach((z,i)=>{
+    const [x,y,w,h,cat,t,s,,,top]=z;
+    const g=el('g',{class:'zone '+cat,tabindex:'0',role:'button','aria-label':t+': '+s,'data-i':i},svg);
+    el('rect',{x,y,width:w,height:h,rx:6},g);
+    const cx=x+w/2, ty=top?y+24:y+h/2-9, sy=top?y+42:y+h/2+10;
+    const a=el('text',{class:'t',x:cx,y:ty,'text-anchor':'middle','dominant-baseline':'central'},g);a.textContent=t;
+    const b=el('text',{class:'s',x:cx,y:sy,'text-anchor':'middle','dominant-baseline':'central'},g);b.textContent=s;
+    g.addEventListener('click',()=>pick(i));
+    g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(i);}});
+  });
+}
+
+function drawStats(){
+  document.getElementById('stats').innerHTML=D[cur].stats.map(s=>`<span>${s[0]}<b>${s[1]}</b></span>`).join('');
+}
+
+function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function drawPanel(msg){
+  if(sel===null){
+    panel.innerHTML=`<h2>${NAMES[cur]}</h2><p>${D[cur].overview}</p>${msg?`<p class="hint">${msg}</p>`:''}<p class="hint">Select a zone on the floor plan to learn why it’s there.</p>`;
+    return;
+  }
+  const z=D[cur].z[sel], concept=z[7];
+  const rows=['urban','suburban','rural','free'].map(k=>{
+    const isCur=k===cur;
+    return `<li class="${isCur?'cur':''}"><button data-k="${k}" ${isCur?'aria-current="true"':''}><span class="who">${NAMES[k]}${isCur?'<span class="here">This plan</span>':''}</span><span class="what">${esc(C[concept][k])}</span></button></li>`;
+  }).join('');
+  panel.innerHTML=`<h2>${esc(z[5])}</h2><span class="chip ${z[4]}">${CAT[z[4]]}</span><p>${esc(z[8])}</p><h3>In other communities</h3><ul class="cmp">${rows}</ul>`;
+  panel.querySelectorAll('.cmp button').forEach(b=>b.addEventListener('click',()=>{
+    const k=b.dataset.k; if(k===cur)return;
+    const j=D[k].z.findIndex(zz=>zz[7]===concept);
+    setCommunity(k, j>=0?j:null, j>=0?null:`This plan has no separate “${z[5]}” zone. That role is handled elsewhere or not at all.`);
+  }));
+}
+
+function pick(i){
+  sel=i;
+  svg.querySelectorAll('.zone').forEach(g=>g.classList.toggle('sel',+g.dataset.i===i));
+  drawPanel();
+}
+
+function setCommunity(k,i,msg){
+  cur=k; sel=null;
+  document.querySelectorAll('#seg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===k?'true':'false'));
+  drawStats(); drawPlan();
+  if(i!==null&&i!==undefined) pick(i); else drawPanel(msg);
+  try{localStorage.setItem('er-layout-community',k);}catch(e){}
+}
+
+document.querySelectorAll('#seg button').forEach(b=>b.addEventListener('click',()=>setCommunity(b.dataset.k,null)));
+let start='urban';
+try{const s=localStorage.getItem('er-layout-community');if(s&&D[s])start=s;}catch(e){}
+setCommunity(start,null);
+</script>
+</body>
+</html>
